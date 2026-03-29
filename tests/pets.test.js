@@ -6,12 +6,23 @@ import {
   checkBody,
 } from "../helpers/checks.js";
 import { group } from "k6";
+import { Counter, Rate, Trend } from "k6/metrics";
+
+// Define Custom Metric types
+const crudDuration = new Trend("crud_cycle_duration");
+const petsCreated = new Counter("pets_created");
+const crudSuccess = new Rate("crud_success_rate");
+
+// Initialize test data
 const testData = JSON.parse(open("../data/testdata.json"));
 
 // GET all existing pets
 export function crudPets(token) {
   const pet = testData.pets[Math.floor(Math.random() * testData.pets.length)];
+  const startTime = Date.now();
   let petId;
+  let success = true;
+
   group("List Pets", () => {
     const listPetRes = get("/v1/pets", { tags: { name: "list-pets" } });
     checkStatus(listPetRes, 200);
@@ -26,13 +37,21 @@ export function crudPets(token) {
     });
     checkStatus(createPetRes, 201);
 
+    if (createPetRes.status !== 201) success = false;
+
     petId = createPetRes.json().id;
+
+    // Metric - Total pets created during the test
+    petsCreated.add(1);
   });
 
   // GET single pet by id
   group("Get Pet", () => {
     const getPetRes = get(`/v1/pets/${petId}`, { tags: { name: "get-pet" } });
     checkStatus(getPetRes, 200);
+
+    if (getPetRes.status !== 200) success = false;
+
     checkBody(getPetRes, "name");
   });
 
@@ -54,6 +73,7 @@ export function crudPets(token) {
       },
     );
     checkStatus(updatePetRes, 200);
+    if (updatePetRes.status !== 200) success = false;
   });
 
   // DELETE pet
@@ -63,6 +83,11 @@ export function crudPets(token) {
       tags: { name: "delete-pet" },
     });
     checkStatus(deletePetRes, 204);
+    if (deletePetRes.status !== 204) success = false;
     sleep(1);
   });
+
+  // Metrics
+  crudSuccess.add(success);
+  crudDuration.add(Date.now() - startTime);
 }
