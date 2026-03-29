@@ -41,7 +41,9 @@ export function crudPets(token) {
     if (createPetRes.status !== 201) success = false;
     else petsCreated.add(1);
 
-    petId = createPetRes.json().id;
+    if (createPetRes.status === 201) {
+      petId = createPetRes.json().id;
+    }
   });
 
   // GET single pet by id

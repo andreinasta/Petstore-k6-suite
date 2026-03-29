@@ -52,9 +52,10 @@ export function crudOrders(token, petId, userId) {
     checkStatus(createOrderRes, 201);
 
     if (createOrderRes.status !== 201) success = false;
-    else ordersCreated.add(1);
-
-    orderId = createOrderRes.json().id;
+    else {
+      ordersCreated.add(1);
+      orderId = createOrderRes.json().id;
+    }
   });
 
   // GET order by id

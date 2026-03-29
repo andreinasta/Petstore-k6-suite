@@ -4,6 +4,7 @@ import { crudOrders } from "../../tests/store.test.js";
 import { registerUserFull } from "../../helpers/auth.js";
 import { currentEnv } from "../../config/environments.js";
 import { generateReport } from "../../helpers/report.js";
+import { del } from "../../utils/request.js";
 
 const isProd = __ENV.PROFILE === "prod";
 
@@ -35,7 +36,11 @@ export const options = {
 };
 
 export function setup() {
-  const { token, userId } = registerUserFull();
+  const userData = registerUserFull();
+  if (!userData || !userData.token || !userData.userId) {
+    throw new Error("Setup failed: user registration did not return token or userId");
+  }
+  const { token, userId } = userData;
 
   const petRes = http.post(
     `${currentEnv.baseUrl}/v1/pets`,
@@ -68,12 +73,25 @@ export function setup() {
     },
   );
 
+  if (petRes.status !== 201) {
+    throw new Error(`Setup failed: pet creation returned status ${petRes.status}`);
+  }
+
   const petId = petRes.json().id;
   return { token, userId, petId };
 }
 
 export default function (data) {
   crudOrders(data.token, data.petId, data.userId);
+}
+
+export function teardown(data) {
+  del(`/v1/pets/${data.petId}`, {
+    headers: { Authorization: `Bearer ${data.token}` },
+  });
+  del(`/v1/users/${data.userId}`, {
+    headers: { Authorization: `Bearer ${data.token}` },
+  });
 }
 
 export function handleSummary(data) {

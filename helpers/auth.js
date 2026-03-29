@@ -6,7 +6,7 @@ export function registerUser() {
   const password = `k6password_${Date.now()}`;
 
   //Register
-  http.post(
+  const registerRes = http.post(
     `${currentEnv.baseUrl}/v1/users`,
     JSON.stringify({
       username,
@@ -20,6 +20,8 @@ export function registerUser() {
     },
   );
 
+  const userId = registerRes.json().id;
+
   const tokenRes = http.post(
     `${currentEnv.baseUrl}/v1/auth/tokens`,
     JSON.stringify({
@@ -30,7 +32,7 @@ export function registerUser() {
       headers: { "Content-Type": "application/json" },
     },
   );
-  return tokenRes.json().token;
+  return { token: tokenRes.json().token, userId };
 }
 
 // Returns token + userId for scenarios that need both (e.g., store tests)

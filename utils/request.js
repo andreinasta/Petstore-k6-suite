@@ -11,6 +11,7 @@ export function get(path, params = {}) {
   return http.get(url, {
     headers: { ...defaultHeaders, ...params.headers },
     tags: params.tags || {},
+    timeout: "10s",
   });
 }
 
@@ -19,6 +20,7 @@ export function post(path, body, params = {}) {
   return http.post(url, JSON.stringify(body), {
     headers: { ...defaultHeaders, ...params.headers },
     tags: params.tags || {},
+    timeout: "10s",
   });
 }
 
@@ -27,6 +29,7 @@ export function put(path, body, params = {}) {
   return http.put(url, JSON.stringify(body), {
     headers: { ...defaultHeaders, ...params.headers },
     tags: params.tags || {},
+    timeout: "10s",
   });
 }
 
@@ -35,5 +38,6 @@ export function del(path, params = {}) {
   return http.del(url, null, {
     headers: { ...defaultHeaders, ...params.headers },
     tags: params.tags || {},
+    timeout: "10s",
   });
 }

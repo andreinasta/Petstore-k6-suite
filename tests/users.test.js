@@ -38,9 +38,10 @@ export function crudUsers() {
     checkStatus(createUserRes, 201);
 
     if (createUserRes.status !== 201) success = false;
-    else usersCreated.add(1);
-
-    userId = createUserRes.json().id;
+    else {
+      usersCreated.add(1);
+      userId = createUserRes.json().id;
+    }
   });
 
   // GET User Token
@@ -57,8 +58,7 @@ export function crudUsers() {
     );
     checkStatus(userTokenRes, 200);
     if (userTokenRes.status !== 200) success = false;
-
-    token = userTokenRes.json().token;
+    else token = userTokenRes.json().token;
   });
 
   // GET single user by id

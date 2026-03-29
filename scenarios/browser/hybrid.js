@@ -4,6 +4,7 @@ import { crudPets } from "../../tests/pets.test.js";
 import { registerUser } from "../../helpers/auth.js";
 import { petThresholds } from "../../config/thresholds.js";
 import { generateReport } from "../../helpers/report.js";
+import { del } from "../../utils/request.js";
 
 export const options = {
   scenarios: {
@@ -40,12 +41,20 @@ export const options = {
 };
 
 export function setup() {
-  return { token: registerUser() };
+  const { token, userId } = registerUser();
+  if (!token) throw new Error("Setup failed: user registration did not return a token");
+  return { token, userId };
 }
 
 // API test — reuses existing CRUD pets flow
 export function apiTest(data) {
   crudPets(data.token);
+}
+
+export function teardown(data) {
+  del(`/v1/users/${data.userId}`, {
+    headers: { Authorization: `Bearer ${data.token}` },
+  });
 }
 
 // Browser test — login + checkout flow
