@@ -1,6 +1,6 @@
 # k6 Performance Testing Framework
 
-A comprehensive performance testing framework built with [k6](https://k6.io/) targeting the [Petstore API](https://api.petstoreapi.com). Since Petstore Project does not feature a complex webpage I have used [Sauce Demo](https://www.saucedemo.com/) frontend for the k6 browser tests. It Covers API load testing, browser-based performance testing, and hybrid scenarios with real-time monitoring via Grafana.
+A performance testing framework I have built with [k6](https://k6.io/) targeting the [Petstore API](https://api.petstoreapi.com). Since Petstore Project does not feature a complex webpage I have used [Sauce Demo](https://www.saucedemo.com/) frontend for the k6 browser tests. The suite covers API load testing, browser-based performance testing, and hybrid scenarios with real-time monitoring via Grafana.
 
 ## Tech Stack
 
@@ -104,7 +104,7 @@ k6 run -e PROFILE=prod scenarios/pets/load.js
 Full CRUD cycle: List → Create → Get → Update → Delete. Requires auth token. Thresholds tuned from real baselines (e.g., `list-pets p(95) < 1200ms`).
 
 ### Users API
-Self-contained CRUD cycle: each iteration registers its own user, authenticates, performs CRUD, then deletes. No shared setup needed.
+Self-contained CRUD cycle: each iteration registers its own user, authenticates, performs CRUD, then deletes, with no shared setup needed.
 
 ### Store API
 Order CRUD cycle with dependencies (requires user + pet). Note: store endpoints currently return 404 (API not implemented). Tests kept to demonstrate the pattern.
