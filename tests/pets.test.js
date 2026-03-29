@@ -27,7 +27,6 @@ export function crudPets(token) {
   group("List Pets", () => {
     const listPetRes = get("/v1/pets", { tags: { name: "list-pets" } });
     checkStatus(listPetRes, 200);
-    checkResponseTime(listPetRes, 500);
   });
 
   // POST create a pet

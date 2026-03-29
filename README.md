@@ -179,22 +179,75 @@ GitHub Actions workflow (`.github/workflows/k6-tests.yml`):
 
 Reports are uploaded as artifacts on every run.
 
-## Performance Baselines
+## Test Results
 
-Measured against `https://api.petstoreapi.com`:
+Measured against `https://api.petstoreapi.com` (dev profile durations).
 
-**Pets (10 VUs load):**
-| Endpoint | p(95) |
-|----------|-------|
-| list-pets | 936ms |
-| create-pet | 798ms |
-| get-pet | 284ms |
-| update-pet | 172ms |
-| delete-pet | 185ms |
+### Pets API
 
-**Users (80 VUs stress):** All endpoints under 136ms p(95). 1 failure out of 5,475 iterations.
+#### Summary
 
-**Key finding:** API throttles under heavy load (list-pets degrades to 6s p(95) at 80 VUs) but returns 0% HTTP errors — graceful degradation, no crashes.
+| Scenario | VUs | Duration | Iterations | Requests | Error Rate | Checks | Thresholds |
+|----------|-----|----------|------------|----------|------------|--------|------------|
+| **Smoke** | 1 | 30s | 18 | 93 | 0.00% | 100% | All passed |
+| **Load** | 10 | 50s | 185 | 928 | 0.00% | 100% | All passed |
+| **Stress** | 10→80 | 3m 51s | 1,405 | 7,028 | 0.00% | 100% | 5/7 crossed |
+
+#### Response Times by Endpoint (p95)
+
+| Endpoint | Smoke (1 VU) | Load (10 VUs) | Stress (80 VUs) | Threshold |
+|----------|-------------|---------------|-----------------|-----------|
+| list-pets | 234ms | 879ms | 6,033ms | p(95) < 1200ms |
+| create-pet | 143ms | 825ms | 6,275ms | p(95) < 1000ms |
+| get-pet | 125ms | 324ms | 616ms | p(95) < 350ms |
+| update-pet | 125ms | 225ms | 921ms | p(95) < 250ms |
+| delete-pet | 122ms | 158ms | 707ms | p(95) < 250ms |
+
+#### Custom Metrics
+
+| Metric | Smoke | Load | Stress |
+|--------|-------|------|--------|
+| CRUD cycle p(95) | 751ms | 1,668ms | 9,992ms |
+| Pets created | 18 | 185 | 1,405 |
+| CRUD success rate | 100% | 100% | 100% |
+| Throughput (req/s) | 3.0 | 17.8 | 30.3 |
+
+### Users API
+
+#### Summary
+
+| Scenario | VUs | Duration | Iterations | Requests | Error Rate | Checks | Thresholds |
+|----------|-----|----------|------------|----------|------------|--------|------------|
+| **Smoke** | 1 | 30s | 19 | 95 | 0.00% | 100% | All passed |
+| **Load** | 10 | 50s | 255 | 1,275 | 0.00% | 100% | All passed |
+| **Stress** | 10→80 | 3m 51s | 5,480 | 27,398 | 0.004% | 99.99% | All passed |
+
+#### Response Times by Endpoint (p95)
+
+| Endpoint | Smoke (1 VU) | Load (10 VUs) | Stress (80 VUs) | Threshold |
+|----------|-------------|---------------|-----------------|-----------|
+| create-user | 140ms | 128ms | 139ms | p(95) < 300ms |
+| get-token | 118ms | 125ms | 129ms | p(95) < 300ms |
+| get-user | 117ms | 125ms | 129ms | p(95) < 300ms |
+| update-user | 121ms | 128ms | 138ms | p(95) < 300ms |
+| delete-user | 118ms | 126ms | 132ms | p(95) < 300ms |
+
+#### Custom Metrics
+
+| Metric | Smoke | Load | Stress |
+|--------|-------|------|--------|
+| CRUD cycle p(95) | 674ms | 633ms | 823ms |
+| Users created | 19 | 255 | 5,480 |
+| CRUD success rate | 100% | 100% | 100% |
+| Throughput (req/s) | 3.1 | 24.8 | 118.6 |
+
+### Key Findings
+
+- **Zero HTTP errors on pets** across all scenarios — the API throttles under load but never breaks
+- **Pets degrade significantly under stress** — list-pets goes from 234ms (1 VU) to 6,033ms (80 VUs), a 25x increase
+- **Users are rock-solid** — all endpoints stay under 140ms p(95) even at 80 VUs, with only 2 check failures out of 32,878
+- **Different scaling characteristics** — pets endpoints share a bottleneck (likely database queries on a growing collection), while user endpoints scale linearly
+- **Throughput scales well for users** — 3.1 req/s at 1 VU → 118.6 req/s at 80 VUs (38x increase with 80x VUs)
 
 ## k6 Cloud
 
