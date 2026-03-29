@@ -1,7 +1,7 @@
-import { defaultThresholds } from "../config/thresholds.js";
-import { crudPets } from "../tests/pets.test.js";
-import { registerUser } from "../helpers/auth.js";
-import { generateReport } from "../helpers/report.js";
+import { petThresholds } from "../../config/thresholds.js";
+import { crudPets } from "../../tests/pets.test.js";
+import { registerUser } from "../../helpers/auth.js";
+import { generateReport } from "../../helpers/report.js";
 
 export const options = {
   scenarios: {
@@ -19,7 +19,7 @@ export const options = {
       ],
     },
   },
-  thresholds: defaultThresholds,
+  thresholds: petThresholds,
 };
 
 export function setup() {
@@ -31,5 +31,5 @@ export default function (data) {
 }
 
 export function handleSummary(data) {
-  return generateReport(data, "ramping-rate");
+  return generateReport(data, "pets-ramping-rate");
 }

@@ -9,20 +9,21 @@ import { group } from "k6";
 import { Counter, Rate, Trend } from "k6/metrics";
 
 // Define Custom Metric types
-const crudDuration = new Trend("crud_cycle_duration");
+const petsCrudDuration = new Trend("pets_crud_cycle_duration");
 const petsCreated = new Counter("pets_created");
-const crudSuccess = new Rate("crud_success_rate");
+const petsCrudSuccess = new Rate("pets_crud_success_rate");
 
 // Initialize test data
 const testData = JSON.parse(open("../data/testdata.json"));
 
-// GET all existing pets
 export function crudPets(token) {
-  const pet = testData.pets[Math.floor(Math.random() * testData.pets.length)];
   const startTime = Date.now();
+  const pet = testData.pets[Math.floor(Math.random() * testData.pets.length)];
+
   let petId;
   let success = true;
 
+  // GET all existing pets
   group("List Pets", () => {
     const listPetRes = get("/v1/pets", { tags: { name: "list-pets" } });
     checkStatus(listPetRes, 200);
@@ -41,8 +42,6 @@ export function crudPets(token) {
     else petsCreated.add(1);
 
     petId = createPetRes.json().id;
-
-    // Metric - Total pets created during the test
   });
 
   // GET single pet by id
@@ -87,8 +86,8 @@ export function crudPets(token) {
   });
 
   // Metrics
-  crudSuccess.add(success);
-  crudDuration.add(Date.now() - startTime);
+  petsCrudSuccess.add(success);
+  petsCrudDuration.add(Date.now() - startTime);
 
   //Pause between iterations to simulate real user behavior
   sleep(1);

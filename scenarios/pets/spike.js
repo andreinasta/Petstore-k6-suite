@@ -1,7 +1,7 @@
-import { defaultThresholds } from "../config/thresholds.js";
-import { crudPets } from "../tests/pets.test.js";
-import { registerUser } from "../helpers/auth.js";
-import { generateReport } from "../helpers/report.js";
+import { petThresholds } from "../../config/thresholds.js";
+import { crudPets } from "../../tests/pets.test.js";
+import { registerUser } from "../../helpers/auth.js";
+import { generateReport } from "../../helpers/report.js";
 
 export const options = {
   stages: [
@@ -12,7 +12,7 @@ export const options = {
     { duration: "1m", target: 5 }, // recovery
     { duration: "30s", target: 0 }, // ramp down
   ],
-  thresholds: defaultThresholds,
+  thresholds: petThresholds,
 };
 
 export function setup() {
@@ -24,5 +24,5 @@ export default function (data) {
 }
 
 export function handleSummary(data) {
-  return generateReport(data, "spike");
+  return generateReport(data, "pets-spike");
 }
