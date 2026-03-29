@@ -1,0 +1,16 @@
+{
+  "name": "k6-petstore",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test:smoke": "k6 run scenarios/smoke.js",
+    "test:load": "k6 run scenarios/load.js",
+    "test:stress": "k6 run scenarios/stress.js",
+    "test:spike": "k6 run scenarios/spike.js",
+    "test:soak": "k6 run scenarios/soak.js"
+  },
+  "keywords": [],
+  "author": "Andrei",
+  "license": "ISC",
+  "description": "k6 performance tests for the PetStore API website"
+}

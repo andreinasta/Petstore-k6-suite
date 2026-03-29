@@ -1,0 +1,16 @@
+{
+  "pets": [
+    {
+      "name": "Rontzy",
+      "status": "available"
+    },
+    {
+      "name": "Bobo",
+      "status": "available"
+    },
+    {
+      "name": "Pisa",
+      "status": "pending"
+    }
+  ]
+}
