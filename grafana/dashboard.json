@@ -1,0 +1,162 @@
+{
+  "dashboard": {
+    "title": "k6 Test Results",
+    "uid": "k6-custom",
+    "refresh": "5s",
+    "time": { "from": "now-1h", "to": "now" },
+    "panels": [
+      {
+        "id": 1, "title": "Virtual Users", "type": "timeseries",
+        "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [{
+          "refId": "A",
+          "query": "SELECT last(\"value\") FROM \"vus\" WHERE $timeFilter GROUP BY time($__interval) fill(none)",
+          "rawQuery": true
+        }]
+      },
+      {
+        "id": 2, "title": "Requests per Second", "type": "timeseries",
+        "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [{
+          "refId": "A",
+          "query": "SELECT count(\"value\") FROM \"http_reqs\" WHERE $timeFilter GROUP BY time($__interval) fill(none)",
+          "rawQuery": true
+        }]
+      },
+      {
+        "id": 3, "title": "Error Rate (%)", "type": "timeseries",
+        "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [{
+          "refId": "A",
+          "query": "SELECT mean(\"value\") * 100 FROM \"http_req_failed\" WHERE $timeFilter GROUP BY time($__interval) fill(none)",
+          "rawQuery": true
+        }],
+        "fieldConfig": { "defaults": { "unit": "percent" } }
+      },
+      {
+        "id": 10, "title": "Total Requests", "type": "stat",
+        "gridPos": { "h": 4, "w": 4, "x": 0, "y": 8 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [{
+          "refId": "A",
+          "query": "SELECT count(\"value\") FROM \"http_reqs\" WHERE $timeFilter",
+          "rawQuery": true
+        }]
+      },
+      {
+        "id": 11, "title": "Avg Response Time", "type": "stat",
+        "gridPos": { "h": 4, "w": 4, "x": 4, "y": 8 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [{
+          "refId": "A",
+          "query": "SELECT mean(\"value\") FROM \"http_req_duration\" WHERE $timeFilter",
+          "rawQuery": true
+        }],
+        "fieldConfig": { "defaults": { "unit": "ms" } }
+      },
+      {
+        "id": 12, "title": "p95 Response Time", "type": "stat",
+        "gridPos": { "h": 4, "w": 4, "x": 8, "y": 8 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [{
+          "refId": "A",
+          "query": "SELECT percentile(\"value\", 95) FROM \"http_req_duration\" WHERE $timeFilter",
+          "rawQuery": true
+        }],
+        "fieldConfig": { "defaults": { "unit": "ms" } }
+      },
+      {
+        "id": 13, "title": "Max Response Time", "type": "stat",
+        "gridPos": { "h": 4, "w": 4, "x": 12, "y": 8 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [{
+          "refId": "A",
+          "query": "SELECT max(\"value\") FROM \"http_req_duration\" WHERE $timeFilter",
+          "rawQuery": true
+        }],
+        "fieldConfig": { "defaults": { "unit": "ms" } }
+      },
+      {
+        "id": 14, "title": "Total Iterations", "type": "stat",
+        "gridPos": { "h": 4, "w": 4, "x": 16, "y": 8 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [{
+          "refId": "A",
+          "query": "SELECT count(\"value\") FROM \"iterations\" WHERE $timeFilter",
+          "rawQuery": true
+        }]
+      },
+      {
+        "id": 15, "title": "Check Pass Rate", "type": "stat",
+        "gridPos": { "h": 4, "w": 4, "x": 20, "y": 8 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [{
+          "refId": "A",
+          "query": "SELECT mean(\"value\") * 100 FROM \"checks\" WHERE $timeFilter",
+          "rawQuery": true
+        }],
+        "fieldConfig": { "defaults": { "unit": "percent" } }
+      },
+      {
+        "id": 4, "title": "Response Time (p95 vs avg vs p99)", "type": "timeseries",
+        "gridPos": { "h": 10, "w": 12, "x": 0, "y": 12 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [
+          { "refId": "A", "alias": "p95", "query": "SELECT percentile(\"value\", 95) FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval) fill(none)", "rawQuery": true },
+          { "refId": "B", "alias": "avg", "query": "SELECT mean(\"value\") FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval) fill(none)", "rawQuery": true },
+          { "refId": "C", "alias": "p99", "query": "SELECT percentile(\"value\", 99) FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval) fill(none)", "rawQuery": true }
+        ],
+        "fieldConfig": { "defaults": { "unit": "ms" } }
+      },
+      {
+        "id": 5, "title": "Response Time Breakdown", "type": "timeseries",
+        "gridPos": { "h": 10, "w": 12, "x": 12, "y": 12 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [
+          { "refId": "A", "alias": "blocked", "query": "SELECT mean(\"value\") FROM \"http_req_blocked\" WHERE $timeFilter GROUP BY time($__interval) fill(none)", "rawQuery": true },
+          { "refId": "B", "alias": "connecting", "query": "SELECT mean(\"value\") FROM \"http_req_connecting\" WHERE $timeFilter GROUP BY time($__interval) fill(none)", "rawQuery": true },
+          { "refId": "C", "alias": "tls", "query": "SELECT mean(\"value\") FROM \"http_req_tls_handshaking\" WHERE $timeFilter GROUP BY time($__interval) fill(none)", "rawQuery": true },
+          { "refId": "D", "alias": "sending", "query": "SELECT mean(\"value\") FROM \"http_req_sending\" WHERE $timeFilter GROUP BY time($__interval) fill(none)", "rawQuery": true },
+          { "refId": "E", "alias": "waiting", "query": "SELECT mean(\"value\") FROM \"http_req_waiting\" WHERE $timeFilter GROUP BY time($__interval) fill(none)", "rawQuery": true },
+          { "refId": "F", "alias": "receiving", "query": "SELECT mean(\"value\") FROM \"http_req_receiving\" WHERE $timeFilter GROUP BY time($__interval) fill(none)", "rawQuery": true }
+        ],
+        "fieldConfig": { "defaults": { "unit": "ms" } }
+      },
+      {
+        "id": 6, "title": "Response Time by Endpoint", "type": "timeseries",
+        "gridPos": { "h": 10, "w": 24, "x": 0, "y": 22 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [{
+          "refId": "A",
+          "query": "SELECT mean(\"value\") FROM \"http_req_duration\" WHERE $timeFilter GROUP BY time($__interval), \"name\" fill(none)",
+          "rawQuery": true
+        }],
+        "fieldConfig": { "defaults": { "unit": "ms" } }
+      },
+      {
+        "id": 7, "title": "Data Sent / Received", "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [
+          { "refId": "A", "alias": "sent", "query": "SELECT mean(\"value\") FROM \"data_sent\" WHERE $timeFilter GROUP BY time($__interval) fill(none)", "rawQuery": true },
+          { "refId": "B", "alias": "received", "query": "SELECT mean(\"value\") FROM \"data_received\" WHERE $timeFilter GROUP BY time($__interval) fill(none)", "rawQuery": true }
+        ],
+        "fieldConfig": { "defaults": { "unit": "decbytes" } }
+      },
+      {
+        "id": 8, "title": "Iteration Duration", "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
+        "datasource": { "type": "influxdb", "uid": "bfhi5q389ws8wc" },
+        "targets": [
+          { "refId": "A", "alias": "avg", "query": "SELECT mean(\"value\") FROM \"iteration_duration\" WHERE $timeFilter GROUP BY time($__interval) fill(none)", "rawQuery": true },
+          { "refId": "B", "alias": "p95", "query": "SELECT percentile(\"value\", 95) FROM \"iteration_duration\" WHERE $timeFilter GROUP BY time($__interval) fill(none)", "rawQuery": true }
+        ],
+        "fieldConfig": { "defaults": { "unit": "ms" } }
+      }
+    ]
+  },
+  "overwrite": true
+}

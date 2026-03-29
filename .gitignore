@@ -13,6 +13,7 @@ Desktop.ini
 # Claude / AI
 .claude/
 HANDOFF.md
+handoff.md
 
 # k6 output
 *.json.gz

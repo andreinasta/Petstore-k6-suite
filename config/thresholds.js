@@ -24,3 +24,12 @@ export const userThresholds = {
   "http_req_duration{name:update-user}": ["p(95)<300"],
   "http_req_duration{name:delete-user}": ["p(95)<300"],
 };
+
+// Store/order-specific thresholds (baselines TBD after smoke runs)
+export const storeThresholds = {
+  ...baseThresholds,
+  "http_req_duration{name:get-inventory}": ["p(95)<300"],
+  "http_req_duration{name:create-order}": ["p(95)<300"],
+  "http_req_duration{name:get-order}": ["p(95)<300"],
+  "http_req_duration{name:cancel-order}": ["p(95)<300"],
+};

@@ -13,7 +13,11 @@
     "test:users:smoke": "k6 run scenarios/users/smoke.js",
     "test:users:load": "k6 run scenarios/users/load.js",
     "test:users:stress": "k6 run scenarios/users/stress.js",
-    "test:users:all": "npm run test:users:load && npm run test:users:stress"
+    "test:users:all": "npm run test:users:load && npm run test:users:stress",
+    "test:store:smoke": "k6 run scenarios/store/smoke.js",
+    "test:store:load": "k6 run scenarios/store/load.js",
+    "test:store:stress": "k6 run scenarios/store/stress.js",
+    "test:store:all": "npm run test:store:load && npm run test:store:stress"
   },
   "keywords": [],
   "author": "Andrei",
