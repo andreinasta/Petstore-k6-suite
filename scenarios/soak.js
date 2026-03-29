@@ -1,6 +1,7 @@
 import { defaultThresholds } from "../config/thresholds.js";
 import { crudPets } from "../tests/pets.test.js";
 import { registerUser } from "../helpers/auth.js";
+import { generateReport } from "../helpers/report.js";
 
 export const options = {
   stages: [
@@ -17,4 +18,8 @@ export function setup() {
 
 export default function (data) {
   crudPets(data.token);
+}
+
+export function handleSummary(data) {
+  return generateReport(data, "soak");
 }

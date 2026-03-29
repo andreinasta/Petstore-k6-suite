@@ -4,11 +4,16 @@ import { registerUser } from "../helpers/auth.js";
 import { generateReport } from "../helpers/report.js";
 
 export const options = {
-  stages: [
-    { duration: "10s", target: 10 }, // ramp up to 10 VUs
-    { duration: "30s", target: 10 }, // stay at 10 VUs
-    { duration: "10s", target: 0 }, // ramp down to 0
-  ],
+  scenarios: {
+    constant_load: {
+      executor: "constant-arrival-rate",
+      rate: 5, // 5 iterations per second
+      timeUnit: "1s",
+      duration: "30s",
+      preAllocatedVUs: 10, // VUs ready to go
+      maxVUs: 20, // can scale up if needed
+    },
+  },
   thresholds: defaultThresholds,
 };
 
@@ -21,5 +26,5 @@ export default function (data) {
 }
 
 export function handleSummary(data) {
-  return generateReport(data, "load");
+  return generateReport(data, "constant-rate");
 }

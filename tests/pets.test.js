@@ -38,11 +38,11 @@ export function crudPets(token) {
     checkStatus(createPetRes, 201);
 
     if (createPetRes.status !== 201) success = false;
+    else petsCreated.add(1);
 
     petId = createPetRes.json().id;
 
     // Metric - Total pets created during the test
-    petsCreated.add(1);
   });
 
   // GET single pet by id
@@ -84,10 +84,12 @@ export function crudPets(token) {
     });
     checkStatus(deletePetRes, 204);
     if (deletePetRes.status !== 204) success = false;
-    sleep(1);
   });
 
   // Metrics
   crudSuccess.add(success);
   crudDuration.add(Date.now() - startTime);
+
+  //Pause between iterations to simulate real user behavior
+  sleep(1);
 }

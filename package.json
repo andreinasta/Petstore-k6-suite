@@ -7,7 +7,9 @@
     "test:load": "k6 run scenarios/load.js",
     "test:stress": "k6 run scenarios/stress.js",
     "test:spike": "k6 run scenarios/spike.js",
-    "test:soak": "k6 run scenarios/soak.js"
+    "test:soak": "k6 run scenarios/soak.js",
+    "test:constant-rate": "k6 run scenarios/constant-rate.js",
+    "test:ramping-rate": "k6 run scenarios/ramping-rate.js"
   },
   "keywords": [],
   "author": "Andrei",
