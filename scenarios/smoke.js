@@ -1,7 +1,4 @@
-import { sleep } from "k6";
 import { defaultThresholds } from "../config/thresholds.js";
-import { get } from "../utils/request.js";
-import { checkStatus, checkResponseTime } from "../helpers/checks.js";
 import { crudPets } from "../tests/pets.test.js";
 import { registerUser } from "../helpers/auth.js";
 

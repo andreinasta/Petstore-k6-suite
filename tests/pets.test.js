@@ -6,43 +6,24 @@ import {
   checkBody,
 } from "../helpers/checks.js";
 import { group } from "k6";
+const testData = JSON.parse(open("../data/testdata.json"));
 
 // GET all existing pets
 export function crudPets(token) {
+  const pet = testData.pets[Math.floor(Math.random() * testData.pets.length)];
   let petId;
   group("List Pets", () => {
-    const listPetRes = get("/v1/pets");
+    const listPetRes = get("/v1/pets", { tags: { name: "list-pets" } });
     checkStatus(listPetRes, 200);
     checkResponseTime(listPetRes, 500);
   });
 
   // POST create a pet
   group("Create Pets", () => {
-    const createPetRes = post(
-      "/v1/pets",
-      {
-        name: "Pisa",
-        species: "CAT",
-        breed: "Dumpsteranian",
-        ageMonths: 120,
-        size: "MEDIUM",
-        color: "Grey",
-        gender: "FEMALE",
-        goodWithKids: true,
-        price: "250.00",
-        currency: "USD",
-        status: "AVAILABLE",
-        description: "Gorgeous Dumpsteranian grey breed.",
-        medicalInfo: {
-          vaccinated: true,
-          spayedNeutered: true,
-          microchipped: true,
-          specialNeeds: false,
-          healthNotes: "Up to date on all vaccinations",
-        },
-      },
-      { headers: { Authorization: `Bearer ${token}` } },
-    );
+    const createPetRes = post("/v1/pets", pet, {
+      headers: { Authorization: `Bearer ${token}` },
+      tags: { name: "create-pet" },
+    });
     checkStatus(createPetRes, 201);
 
     petId = createPetRes.json().id;
@@ -50,7 +31,7 @@ export function crudPets(token) {
 
   // GET single pet by id
   group("Get Pet", () => {
-    const getPetRes = get(`/v1/pets/${petId}`);
+    const getPetRes = get(`/v1/pets/${petId}`, { tags: { name: "get-pet" } });
     checkStatus(getPetRes, 200);
     checkBody(getPetRes, "name");
   });
@@ -60,14 +41,17 @@ export function crudPets(token) {
     const updatePetRes = put(
       `/v1/pets/${petId}`,
       {
-        species: "CAT",
-        name: "Pisa Updated Pet",
-        ageMonths: 121,
+        species: pet.species,
+        name: `${pet.name} Updated`,
+        ageMonths: pet.ageMonths + 1,
         price: "300.00",
         currency: "USD",
         status: "AVAILABLE",
       },
-      { headers: { Authorization: `Bearer ${token}` } },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        tags: { name: "update-pet" },
+      },
     );
     checkStatus(updatePetRes, 200);
   });
@@ -76,6 +60,7 @@ export function crudPets(token) {
   group("Delete Pet", () => {
     const deletePetRes = del(`/v1/pets/${petId}`, {
       headers: { Authorization: `Bearer ${token}` },
+      tags: { name: "delete-pet" },
     });
     checkStatus(deletePetRes, 204);
     sleep(1);
