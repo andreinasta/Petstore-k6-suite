@@ -1,8 +1,6 @@
 # k6 Performance Testing Framework
 
-A comprehensive performance testing framework built with [k6](https://k6.io/) targeting the [Petstore API](https://api.petstoreapi.com) and [Sauce Demo](https://www.saucedemo.com/) frontend.
-
-Covers API load testing, browser-based performance testing, and hybrid scenarios with real-time monitoring via Grafana.
+A comprehensive performance testing framework built with [k6](https://k6.io/) targeting the [Petstore API](https://api.petstoreapi.com). Since Petstore Project does not feature a complex webpage I have used [Sauce Demo](https://www.saucedemo.com/) frontend for the k6 browser tests. It Covers API load testing, browser-based performance testing, and hybrid scenarios with real-time monitoring via Grafana.
 
 ## Tech Stack
 
