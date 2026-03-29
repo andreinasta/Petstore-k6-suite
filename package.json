@@ -17,7 +17,15 @@
     "test:store:smoke": "k6 run scenarios/store/smoke.js",
     "test:store:load": "k6 run scenarios/store/load.js",
     "test:store:stress": "k6 run scenarios/store/stress.js",
-    "test:store:all": "npm run test:store:load && npm run test:store:stress"
+    "test:store:all": "npm run test:store:load && npm run test:store:stress",
+    "test:pets:load:prod": "k6 run -e PROFILE=prod scenarios/pets/load.js",
+    "test:pets:stress:prod": "k6 run -e PROFILE=prod scenarios/pets/stress.js",
+    "test:pets:soak:prod": "k6 run -e PROFILE=prod scenarios/pets/soak.js",
+    "test:users:load:prod": "k6 run -e PROFILE=prod scenarios/users/load.js",
+    "test:users:stress:prod": "k6 run -e PROFILE=prod scenarios/users/stress.js",
+    "test:store:load:prod": "k6 run -e PROFILE=prod scenarios/store/load.js",
+    "test:store:stress:prod": "k6 run -e PROFILE=prod scenarios/store/stress.js",
+    "test:browser:smoke": "k6 run scenarios/browser/smoke.js"
   },
   "keywords": [],
   "author": "Andrei",

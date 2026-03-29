@@ -9,6 +9,7 @@ on:
     - cron: "0 6 * * 1" # every Monday at 6am
 
 jobs:
+  # Runs on every push/PR — fast sanity check
   smoke-test:
     runs-on: ubuntu-latest
     steps:
@@ -18,8 +19,60 @@ jobs:
       - uses: grafana/run-k6-action@v1
         with:
           path: scenarios/pets/smoke.js
+      - uses: grafana/run-k6-action@v1
+        with:
+          path: scenarios/users/smoke.js
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: k6-report
+          name: smoke-reports
+          path: results/
+
+  # Runs on schedule (Monday 6am) — catches regressions over time
+  load-test:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: grafana/setup-k6-action@v1
+      - run: mkdir -p results
+      - uses: grafana/run-k6-action@v1
+        with:
+          path: scenarios/pets/load.js
+        env:
+          PROFILE: prod
+      - uses: grafana/run-k6-action@v1
+        with:
+          path: scenarios/users/load.js
+        env:
+          PROFILE: prod
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: load-reports
+          path: results/
+
+  # Runs on schedule — validates system under peak traffic
+  stress-test:
+    if: github.event_name == 'schedule'
+    needs: load-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: grafana/setup-k6-action@v1
+      - run: mkdir -p results
+      - uses: grafana/run-k6-action@v1
+        with:
+          path: scenarios/pets/stress.js
+        env:
+          PROFILE: prod
+      - uses: grafana/run-k6-action@v1
+        with:
+          path: scenarios/users/stress.js
+        env:
+          PROFILE: prod
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stress-reports
           path: results/
