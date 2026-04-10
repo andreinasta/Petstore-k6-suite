@@ -15,18 +15,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: grafana/setup-k6-action@v1
-      - run: mkdir -p results
+      - run: mkdir -p performance/results
       - uses: grafana/run-k6-action@v1
         with:
-          path: scenarios/pets/smoke.js
+          path: performance/scenarios/pets/smoke.js
       - uses: grafana/run-k6-action@v1
         with:
-          path: scenarios/users/smoke.js
+          path: performance/scenarios/users/smoke.js
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: smoke-reports
-          path: results/
+          path: performance/results/
 
   # Runs on schedule (Monday 6am) — catches regressions over time
   load-test:
@@ -35,22 +35,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: grafana/setup-k6-action@v1
-      - run: mkdir -p results
+      - run: mkdir -p performance/results
       - uses: grafana/run-k6-action@v1
         with:
-          path: scenarios/pets/load.js
+          path: performance/scenarios/pets/load.js
         env:
           PROFILE: prod
       - uses: grafana/run-k6-action@v1
         with:
-          path: scenarios/users/load.js
+          path: performance/scenarios/users/load.js
         env:
           PROFILE: prod
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: load-reports
-          path: results/
+          path: performance/results/
 
   # Runs on schedule — validates system under peak traffic
   stress-test:
@@ -60,19 +60,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: grafana/setup-k6-action@v1
-      - run: mkdir -p results
+      - run: mkdir -p performance/results
       - uses: grafana/run-k6-action@v1
         with:
-          path: scenarios/pets/stress.js
+          path: performance/scenarios/pets/stress.js
         env:
           PROFILE: prod
       - uses: grafana/run-k6-action@v1
         with:
-          path: scenarios/users/stress.js
+          path: performance/scenarios/users/stress.js
         env:
           PROFILE: prod
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: stress-reports
-          path: results/
+          path: performance/results/

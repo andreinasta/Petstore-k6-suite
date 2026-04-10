@@ -6,8 +6,8 @@ export function generateReport(data, scenarioName = "test") {
   const roTime = new Date(now.getTime() + 3 * 60 * 60 * 1000); // UTC+3 (Romania EEST)
   const timestamp = roTime.toISOString().slice(0, 19).replace(/[:.]/g, "-");
   return {
-    [`results/${scenarioName}_${timestamp}.html`]: htmlReport(data),
+    [`performance/results/${scenarioName}_${timestamp}.html`]: htmlReport(data),
     stdout: textSummary(data, { indent: " ", enableColors: true }),
-    [`results/${scenarioName}_${timestamp}.json`]: JSON.stringify(data),
+    [`performance/results/${scenarioName}_${timestamp}.json`]: JSON.stringify(data),
   };
 }
